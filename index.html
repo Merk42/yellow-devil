@@ -61,6 +61,26 @@
                     background-position-x: 120%;
                 }
             }
+
+
+            @keyframes eyeopen {
+                from {
+                    background-position-x: 0%;
+                }
+
+                to {
+                    background-position-x: 100%;
+                }
+            }
+            @keyframes eyeclose {
+                from {
+                    background-position-x: 100%;
+                }
+
+                to {
+                    background-position-x: 0%;
+                }
+            }
             .piece.main {
                 background-image: url('./main.png');
                 background-size: 394px 320px;
@@ -100,12 +120,15 @@
             #yellow-devil {
                 display: inline-grid;
                 grid-template-columns: repeat(6, var(--scale));
-                grid-template-rows: repeat(5, var(--scale));
-/*
+                grid-template-rows: repeat(5, var(--scale));      
+                
+                
+            }
+            #yellow-devil.debug {
                 background-image: url('./main.png');
-                background-size: cover;
+                background-size: calc(6 * var(--scale)) calc(5 * var(--scale));
+                transform: scaleX(-1);
                 image-rendering: pixelated;
-  */              
             }
             #yellow-devil div.main {
                 background-image: url('./main.png');
@@ -190,6 +213,59 @@
             #d:not(.leftside)~#shoulder {
                 transform: translate(1300%);
             }
+
+
+            #eye{
+                background-image: url('./eye.png');
+                background-position-x: 0%;
+                background-size: cover;
+                image-rendering: pixelated;
+            }
+            #eye.a{
+                transform:translate(226px, -8px) scaleX(-1);
+            }
+            #eye.b{
+                transform: translate(238px, 12px) scaleX(-1);
+            }
+            #eye.c{
+                transform: translate(246px, 36px) scaleX(-1);
+            }
+            #eye.d{
+                transform: translate(242px, 60px) scaleX(-1);
+            }
+            #eye.e{
+                transform: translate(238px, 84px) scaleX(-1);
+            }
+
+            #a:not(.leftside)~#eye.a{
+                transform: translate(732px, -8px);
+            }
+            #a:not(.leftside)~#eye.b{
+                transform: translate(720px, 12px);
+            }
+            #a:not(.leftside)~#eye.c{
+                transform: translate(728px, 36px)
+            }
+            #a:not(.leftside)~#eye.d{
+                transform: translate(724px, 60px);
+            }
+            #a:not(.leftside)~#eye.e{
+                transform: translate(720px, 84px);
+            }
+            #eye.opening {
+                animation-name: eyeopen;
+                animation-duration: .5s;
+                animation-iteration-count: 1;
+                animation-timing-function: steps(3);
+                animation-fill-mode: forwards;
+            }
+            #eye.closing {
+                animation-name: eyeclose;
+                animation-duration: .5s;
+                animation-iteration-count: 1;
+                animation-timing-function: steps(3);
+                animation-fill-mode: forwards;
+            }
         </style>
     </head>
     <body>
@@ -218,6 +294,7 @@
             <div id="shoulder" class="r1 c2 leftside"></div>
             <div id="inner-foot" class="r5 c6 leftside"></div>
             <div id="outer-foot" class="r5 c1 leftside"></div>
+            <div id="eye"></div>
         </div>
 
         
@@ -252,11 +329,21 @@
                     }
                     
                     if (event.target.id === 's') {
-                        if (event.target.classList.contains('leftside')) {
-                            window.setTimeout(fireall('right'), 10000)
-                        } else {
-                            window.setTimeout(fireall('left'), 10000)
-                        }
+                        eye('open');
+                    }
+                }
+
+
+                if (event.animationName === "eyeopen") {
+                    window.setTimeout(eye('close'), 3000)
+                }
+                if (event.animationName === "eyeclose") {
+                    const LASTCELL = document.getElementById("s");
+
+                    if (LASTCELL.classList.contains('leftside')) {
+                        window.setTimeout(fireall('right'), 10000)
+                    } else {
+                        window.setTimeout(fireall('left'), 10000)
                     }
                 }
             }
@@ -285,12 +372,27 @@
 
             function fireall(direction) {
                 for (let i = 1; i <= 19; i++) {
-                setTimeout(function() {
-                    firecell(i, direction);
-                }, i * 1000);
+                    setTimeout(function() {
+                        firecell(i, direction);
+                    }, i * 1000);
+                }
             }
+
+            function eye(action) {
+                const EYE = document.getElementById("eye");
+                const min = 1;
+                const max = 5;
+                const POS = Math.floor(Math.random() * (max - min + 1)) + min;
+                const CLS = String.fromCharCode(97 - 1 + POS);
+                if (action === 'open') {
+                    EYE.className = '';
+                    EYE.classList.add(CLS);
+                    EYE.classList.add('opening');
+                } else {
+                    EYE.classList.remove('opening');
+                    EYE.classList.add('closing');
+                }
             }
-            
             fireall('right')
         </script>
     </body>

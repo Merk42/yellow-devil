@@ -105,7 +105,7 @@
                 background-image: url('./main.png');
                 background-size: cover;
                 image-rendering: pixelated;
-                */
+  */              
             }
             #yellow-devil div.main {
                 background-image: url('./main.png');
@@ -172,6 +172,24 @@
                 --distance: 500%;
             }
 
+
+            #c.goleft~#outer-foot,
+            #r.goleft~#inner-foot,
+            #d.goleft~#shoulder,
+            #c.goright~#outer-foot,
+            #r.goright~#inner-foot,
+            #d.goright~#shoulder{
+                display:none;
+            }
+            #c:not(.leftside)~#outer-foot {
+                transform: translate(1500%);
+            }
+            #r:not(.leftside)~#inner-foot {
+                transform: translate(500%);
+            }
+            #d:not(.leftside)~#shoulder {
+                transform: translate(1300%);
+            }
         </style>
     </head>
     <body>
@@ -197,6 +215,9 @@
             <div id="q" class="r1 c5 leftside"></div>
             <div id="r" class="r5 c5 leftside"></div>
             <div id="s" class="r3 c6 leftside"></div>
+            <div id="shoulder" class="r1 c2 leftside"></div>
+            <div id="inner-foot" class="r5 c6 leftside"></div>
+            <div id="outer-foot" class="r5 c1 leftside"></div>
         </div>
 
         
@@ -217,10 +238,22 @@
                 if (event.animationName === "assemble") {
                     event.target.classList.remove("assemble");
                     event.target.classList.add("main");
+                    if (event.target.id === 'c') {
+                        const EXTRA = document.getElementById("outer-foot");
+                        EXTRA.classList.add("main");
+                    }
+                    if (event.target.id === 'r') {
+                        const EXTRA = document.getElementById("inner-foot");
+                        EXTRA.classList.add("main");
+                    }
+                    if (event.target.id === 'd') {
+                        const EXTRA = document.getElementById("shoulder");
+                        EXTRA.classList.add("main");
+                    }
                     
                     if (event.target.id === 's') {
                         if (event.target.classList.contains('leftside')) {
-                             window.setTimeout(fireall('right'), 10000)
+                            window.setTimeout(fireall('right'), 10000)
                         } else {
                             window.setTimeout(fireall('left'), 10000)
                         }
@@ -236,34 +269,24 @@
 
             let intervalId;
 
-            function fireright(n) {
+            function firecell(n, direction) {
                 const ID = String.fromCharCode(97 - 1 + n);
                 const ELEMENT = document.getElementById(ID);
                 ELEMENT.classList.remove("main");
                 ELEMENT.classList.add("piece");
-                ELEMENT.classList.add("goright");
-                ELEMENT.classList.remove("leftside")
-            }
-
-            function fireleft(n) {
-                const ID = String.fromCharCode(97 - 1 + n);
-                const ELEMENT = document.getElementById(ID);
-                ELEMENT.classList.remove("main");
-                ELEMENT.classList.add("piece");
-                ELEMENT.classList.add("goleft");
-                ELEMENT.classList.add("leftside")
-            }
-
-            for (let i = 1; i <= 19; i++) {
-                setTimeout(function() {
-                    fireright(i);
-                }, i * 1000);
+                if (direction === 'left') {
+                    ELEMENT.classList.add("goleft");
+                    ELEMENT.classList.add("leftside");
+                } else {
+                    ELEMENT.classList.add("goright");
+                    ELEMENT.classList.remove("leftside");
+                }
             }
 
             function fireall(direction) {
                 for (let i = 1; i <= 19; i++) {
                 setTimeout(function() {
-                    direction === 'right' ? fireright(i) : fireleft(i);
+                    firecell(i, direction);
                 }, i * 1000);
             }
             }

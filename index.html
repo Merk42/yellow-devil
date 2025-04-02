@@ -94,8 +94,10 @@
             }
             .piece.goright,
             .piece.goleft {
+                --percell: .125s;
+                --movingspeed: calc(var(--percell) * var(--numcells));
                 animation-name: spriting, moveRight;
-                animation-duration: .4s, 1s;
+                animation-duration: .4s, var(--movingspeed);
                 animation-iteration-count: infinite, 1;
                 animation-timing-function: steps(4), linear;
                 animation-fill-mode: none, forwards;
@@ -168,31 +170,37 @@
                 grid-column-start: 1;
                 --spriteX:5;
                 --distance: 1500%;
+                --numcells:15;
             }
             .c2 {
                 grid-column-start: 2;
                 --spriteX:4;
                 --distance: 1300%;
+                --numcells:13;
             }
             .c3 {
                 grid-column-start: 3;
                 --spriteX:3;
                 --distance: 1100%;
+                --numcells:11;
             }
             .c4 {
                 grid-column-start: 4;
                 --spriteX:2;
                 --distance: 900%;
+                --numcells:9;
             }
             .c5 {
                 grid-column-start: 5;
                 --spriteX:1;
                 --distance: 700%;
+                --numcells:7;
             }
             .c6 {
                 grid-column-start: 6;
                 --spriteX:0;
                 --distance: 500%;
+                --numcells:5;
             }
 
 

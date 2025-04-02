@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width"/>
+        <title>Yellow Devil</title>
+        <style type="text/css">
+            body {
+                --scale:64px;
+                background-color: black;
+            }
+            #width {
+                width:calc(var(--scale) * 16);
+                height: 1px;
+            }
+            @keyframes spriting {
+                from {
+                    background-position-x: 0;
+                }
+
+                to {
+                    background-position-x: 80%;
+                }
+            }
+            @keyframes spriting1 {
+                from {
+                    background-position-x: 80%;
+                }
+
+                to {
+                    background-position-x: 0%;
+                }
+            }
+
+            @keyframes moveRight {
+                from {
+                    transform: translateX(0);
+                }
+
+                to {
+                    transform: translateX(var(--distance));
+                }
+            }
+            @keyframes moveLeft {
+                from {
+                    transform: translateX(var(--distance));
+                }
+
+                to {
+                    transform: translateX(0);
+                }
+            }
+
+            
+            @keyframes assemble {
+                from {
+                    background-position-x: 80%;
+                }
+
+                to {
+                    background-position-x: 120%;
+                }
+            }
+            .piece.main {
+                background-image: url('./main.png');
+                background-size: 394px 320px;
+            }
+            .piece {
+                background-image: url('./pieces.png');
+                aspect-ratio: 1;
+                width: var(--scale);
+                background-size: cover;
+                image-rendering: pixelated;
+            }
+            .piece.goright,
+            .piece.goleft {
+                animation-name: spriting, moveRight;
+                animation-duration: .4s, 1s;
+                animation-iteration-count: infinite, 1;
+                animation-timing-function: steps(4), linear;
+                animation-fill-mode: none, forwards;
+                background-image: url('./pieces.png')!important;
+                z-index: 1;
+            }
+            .piece.goleft {
+                animation-name: spriting1, moveLeft;
+            }
+
+            .piece.assemble {
+                animation-name: assemble;
+                animation-duration: .25s;
+                animation-iteration-count: 1;
+                animation-timing-function: steps(2);
+                animation-fill-mode: forwards;
+            }
+
+
+
+
+            #yellow-devil {
+                display: inline-grid;
+                grid-template-columns: repeat(6, var(--scale));
+                grid-template-rows: repeat(5, var(--scale));
+/*
+                background-image: url('./main.png');
+                background-size: cover;
+                image-rendering: pixelated;
+                */
+            }
+            #yellow-devil div.main {
+                background-image: url('./main.png');
+                background-size: calc(6 * var(--scale)) calc(5 * var(--scale));
+                aspect-ratio: 1;
+                width: var(--scale);
+
+                grid-column-end: span 1;
+                grid-row-end: span 1;
+                background-position-x: calc(var(--scale) * var(--spriteX) * -1);
+                background-position-y: calc(var(--scale) * var(--spriteY) * -1);
+            }
+            #yellow-devil div.leftside {
+                transform: scaleX(-1);
+            }
+            .r1 {
+                grid-row-start: 1;
+                --spriteY:0;
+            }
+            .r2 {
+                grid-row-start: 2;
+                --spriteY:1;
+            }
+            .r3 {
+                grid-row-start: 3;
+                --spriteY:2;
+            }
+            .r4 {
+                grid-row-start: 4;
+                --spriteY:3;
+            }
+            .r5 {
+                grid-row-start: 5;
+                --spriteY:4;
+            }
+            .c1 {
+                grid-column-start: 1;
+                --spriteX:5;
+                --distance: 1500%;
+            }
+            .c2 {
+                grid-column-start: 2;
+                --spriteX:4;
+                --distance: 1300%;
+            }
+            .c3 {
+                grid-column-start: 3;
+                --spriteX:3;
+                --distance: 1100%;
+            }
+            .c4 {
+                grid-column-start: 4;
+                --spriteX:2;
+                --distance: 900%;
+            }
+            .c5 {
+                grid-column-start: 5;
+                --spriteX:1;
+                --distance: 700%;
+            }
+            .c6 {
+                grid-column-start: 6;
+                --spriteX:0;
+                --distance: 500%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="width"></div>
+        <div id="yellow-devil">
+
+            <div id="a" class="r4 c2 leftside"></div>
+            <div id="b" class="r3 c2 leftside"></div>
+            <div id="c" class="r5 c2 leftside"></div> <!-- foot -->
+            <div id="d" class="r2 c2 leftside"></div> <!-- shoulder -->
+            <div id="e" class="r3 c3 leftside"></div>
+            <div id="f" class="r4 c3 leftside"></div>
+            <div id="g" class="r2 c3 leftside"></div>
+            <div id="h" class="r1 c3 leftside"></div>
+            <div id="i" class="r5 c4 leftside"></div>
+            <div id="j" class="r4 c4 leftside"></div>
+            <div id="k" class="r3 c4 leftside"></div>
+            <div id="l" class="r1 c4 leftside"></div>
+            <div id="m" class="r2 c4 leftside"></div>
+            <div id="n" class="r4 c5 leftside"></div>
+            <div id="o" class="r2 c5 leftside"></div>
+            <div id="p" class="r3 c5 leftside"></div>
+            <div id="q" class="r1 c5 leftside"></div>
+            <div id="r" class="r5 c5 leftside"></div>
+            <div id="s" class="r3 c6 leftside"></div>
+        </div>
+
+        
+        <script type="text/javascript">
+            function listener(event) {
+                // console.log('event', event);
+                if (event.animationName === "moveRight") {
+                    event.target.classList.remove("goright");
+                    const customPropertyValue = getComputedStyle(event.target).getPropertyValue('--distance');
+                    event.target.style.transform = "translateX(" + customPropertyValue +")";
+                    event.target.classList.add("assemble");
+                }
+                if (event.animationName === "moveLeft") {
+                    event.target.classList.remove("goleft");
+                    event.target.style.transform = `translateX(0) scaleX(-1)`;
+                    event.target.classList.add("assemble");
+                }
+                if (event.animationName === "assemble") {
+                    event.target.classList.remove("assemble");
+                    event.target.classList.add("main");
+                    
+                    if (event.target.id === 's') {
+                        if (event.target.classList.contains('leftside')) {
+                             window.setTimeout(fireall('right'), 10000)
+                        } else {
+                            window.setTimeout(fireall('left'), 10000)
+                        }
+                    }
+                }
+            }
+
+            const elements = document.querySelectorAll('#yellow-devil div');
+
+            elements.forEach(element => {
+                element.addEventListener("animationend", listener, false);
+            });
+
+            let intervalId;
+
+            function fireright(n) {
+                const ID = String.fromCharCode(97 - 1 + n);
+                const ELEMENT = document.getElementById(ID);
+                ELEMENT.classList.remove("main");
+                ELEMENT.classList.add("piece");
+                ELEMENT.classList.add("goright");
+                ELEMENT.classList.remove("leftside")
+            }
+
+            function fireleft(n) {
+                const ID = String.fromCharCode(97 - 1 + n);
+                const ELEMENT = document.getElementById(ID);
+                ELEMENT.classList.remove("main");
+                ELEMENT.classList.add("piece");
+                ELEMENT.classList.add("goleft");
+                ELEMENT.classList.add("leftside")
+            }
+
+            for (let i = 1; i <= 19; i++) {
+                setTimeout(function() {
+                    fireright(i);
+                }, i * 1000);
+            }
+
+            function fireall(direction) {
+                for (let i = 1; i <= 19; i++) {
+                setTimeout(function() {
+                    direction === 'right' ? fireright(i) : fireleft(i);
+                }, i * 1000);
+            }
+            }
+            
+            fireall('right')
+        </script>
+    </body>
+</html>

@@ -94,7 +94,7 @@
             }
             .piece.goright,
             .piece.goleft {
-                --percell: .125s;
+                --percell: .0625s;
                 --movingspeed: calc(var(--percell) * var(--numcells));
                 animation-name: spriting, moveRight;
                 animation-duration: .4s, var(--movingspeed);
@@ -132,6 +132,11 @@
                 transform: scaleX(-1);
                 image-rendering: pixelated;
             }
+            #yellow-devil.debug div{
+                transform: translateX(0px) scaleX(-1)"
+            }
+
+            #yellow-devil.debug div,
             #yellow-devil div.main {
                 background-image: url('./main.png');
                 background-size: calc(6 * var(--scale)) calc(5 * var(--scale));
@@ -142,9 +147,14 @@
                 grid-row-end: span 1;
                 background-position-x: calc(var(--scale) * var(--spriteX) * -1);
                 background-position-y: calc(var(--scale) * var(--spriteY) * -1);
+                image-rendering: pixelated;
+
             }
             #yellow-devil div.leftside {
                 transform: scaleX(-1);
+            }
+            #yellow-devil div.rightside {
+                transform: translateX(var(--distance))
             }
             .r1 {
                 grid-row-start: 1;
@@ -209,16 +219,24 @@
             #d.goleft~#shoulder,
             #c.goright~#outer-foot,
             #r.goright~#inner-foot,
-            #d.goright~#shoulder{
+            #d.goright~#shoulder,
+            #c.assemble~#outer-foot,
+            #r.assemble~#inner-foot,
+            #d.assemble~#shoulder{
                 display:none;
             }
-            #c:not(.leftside)~#outer-foot {
+            #c.leftside~#outer-foot,
+            #r.leftside~#inner-foot,
+            #d.leftside~#shoulder {
+                transform: scaleX(-1);
+            }
+            #c.rightside~#outer-foot {
                 transform: translate(1500%);
             }
-            #r:not(.leftside)~#inner-foot {
+            #r.rightside~#inner-foot {
                 transform: translate(500%);
             }
-            #d:not(.leftside)~#shoulder {
+            #d.rightside~#shoulder {
                 transform: translate(1300%);
             }
 
@@ -228,37 +246,51 @@
                 background-position-x: 0%;
                 background-size: cover;
                 image-rendering: pixelated;
+
+                --eyeX: calc(var(--eyeXoffset) * var(--scale));
+                --eyeY: calc(var(--eyeYoffset) * var(--scale));
+                transform: translate(var(--eyeX), var(--eyeY)) scaleX(var(--eyeScaleX, 1));
             }
-            #eye.a{
-                transform:translate(226px, -8px) scaleX(-1);
-            }
-            #eye.b{
-                transform: translate(238px, 12px) scaleX(-1);
-            }
-            #eye.c{
-                transform: translate(246px, 36px) scaleX(-1);
-            }
-            #eye.d{
-                transform: translate(242px, 60px) scaleX(-1);
-            }
-            #eye.e{
-                transform: translate(238px, 84px) scaleX(-1);
+            #a.leftside~#eye{
+                --eyeScaleX:-1;
             }
 
-            #a:not(.leftside)~#eye.a{
-                transform: translate(732px, -8px);
+
+            #eye.a{
+                --eyeXoffset:3.5;
+                --eyeYoffset: -.125;
             }
-            #a:not(.leftside)~#eye.b{
-                transform: translate(720px, 12px);
+            #eye.b{
+                --eyeXoffset: 3.6875;
+                --eyeYoffset: .1875;
             }
-            #a:not(.leftside)~#eye.c{
-                transform: translate(728px, 36px)
+            #eye.c{
+                --eyeXoffset: 3.8125;
+                --eyeYoffset: .5625;
             }
-            #a:not(.leftside)~#eye.d{
-                transform: translate(724px, 60px);
+            #eye.d{
+                --eyeXoffset: 3.75;
+                --eyeYoffset: 0.9375;
             }
-            #a:not(.leftside)~#eye.e{
-                transform: translate(720px, 84px);
+            #eye.e{
+                --eyeXoffset: 3.6875;
+                --eyeYoffset: 1.3125;
+            }
+
+            #a.rightside~#eye.a{
+                --eyeXoffset:11.5;
+            }
+            #a.rightside~#eye.b{
+                --eyeXoffset: 11.3125;
+            }
+            #a.rightside~#eye.c{
+                --eyeXoffset: 11.1875;
+            }
+            #a.rightside~#eye.d{
+                --eyeXoffset: 11.25;
+            }
+            #a.rightside~#eye.e{
+                --eyeXoffset: 11.3125;
             }
             #eye.opening {
                 animation-name: eyeopen;
@@ -279,7 +311,6 @@
     <body>
         <div id="width"></div>
         <div id="yellow-devil">
-
             <div id="a" class="r4 c2 leftside"></div>
             <div id="b" class="r3 c2 leftside"></div>
             <div id="c" class="r5 c2 leftside"></div> <!-- foot -->
@@ -299,9 +330,9 @@
             <div id="q" class="r1 c5 leftside"></div>
             <div id="r" class="r5 c5 leftside"></div>
             <div id="s" class="r3 c6 leftside"></div>
-            <div id="shoulder" class="r1 c2 leftside"></div>
-            <div id="inner-foot" class="r5 c6 leftside"></div>
-            <div id="outer-foot" class="r5 c1 leftside"></div>
+            <div id="shoulder" class="r1 c2"></div>
+            <div id="inner-foot" class="r5 c6"></div>
+            <div id="outer-foot" class="r5 c1"></div>
             <div id="eye"></div>
         </div>
 
@@ -311,13 +342,10 @@
                 // console.log('event', event);
                 if (event.animationName === "moveRight") {
                     event.target.classList.remove("goright");
-                    const customPropertyValue = getComputedStyle(event.target).getPropertyValue('--distance');
-                    event.target.style.transform = "translateX(" + customPropertyValue +")";
                     event.target.classList.add("assemble");
                 }
                 if (event.animationName === "moveLeft") {
                     event.target.classList.remove("goleft");
-                    event.target.style.transform = `translateX(0) scaleX(-1)`;
                     event.target.classList.add("assemble");
                 }
                 if (event.animationName === "assemble") {
@@ -357,12 +385,9 @@
             }
 
             const elements = document.querySelectorAll('#yellow-devil div');
-
             elements.forEach(element => {
                 element.addEventListener("animationend", listener, false);
             });
-
-            let intervalId;
 
             function firecell(n, direction) {
                 const ID = String.fromCharCode(97 - 1 + n);
@@ -372,9 +397,11 @@
                 if (direction === 'left') {
                     ELEMENT.classList.add("goleft");
                     ELEMENT.classList.add("leftside");
+                    ELEMENT.classList.remove("rightside");
                 } else {
                     ELEMENT.classList.add("goright");
                     ELEMENT.classList.remove("leftside");
+                    ELEMENT.classList.add("rightside");
                 }
             }
 
